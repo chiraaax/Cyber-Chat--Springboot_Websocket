@@ -2,48 +2,139 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cyber Chat - Powered By Spring Boot Websocket</title>
-    <link rel="stylesheet" href="static/css/main.css">
+    <title>CyberNet Terminal - Secure Communication Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Styles -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="css/main.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="username-page">
-        <div class="username-page-container">
-            <h1 class="title">Type your username to enter the Chatroom</h1>
+
+<!-- Animated Background -->
+<div class="cyber-background">
+    <div class="grid-lines"></div>
+    <div class="floating-particles"></div>
+    <div class="scan-lines"></div>
+</div>
+
+<!-- Username Page -->
+<div id="username-page">
+    <div class="username-page-container">
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <span class="control-dot red"></span>
+                <span class="control-dot yellow"></span>
+                <span class="control-dot green"></span>
+            </div>
+            <div class="terminal-title">CYBERNET_TERMINAL_V2.1</div>
+        </div>
+
+        <div class="terminal-content">
+            <div class="cyber-logo">
+                <div class="logo-icon">⚡</div>
+                <h1 class="title">CYBERNET TERMINAL</h1>
+                <div class="subtitle">SECURE COMMUNICATION HUB</div>
+            </div>
+
+            <div class="access-prompt">
+                <p class="prompt-text">[SYSTEM] Authentication required...</p>
+                <p class="prompt-text">[SYSTEM] Enter your handle to access the network</p>
+            </div>
+
             <form id="usernameForm" name="usernameForm">
                 <div class="form-group">
-                    <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="accent username-submit">Start Chatting</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="chat-page" class="hidden">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h2>Spring WebSocket Cyber Chat App - By Chiran</h2>
-            </div>
-            <div class="connecting">
-                Connecting...
-            </div>
-            <ul id="messageArea">
-
-            </ul>
-            <form id="messageForm" name="messageForm">
-                <div class="form-group">
-                    <div class="input-group clearfix">
-                        <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
-                        <button type="submit" class="primary">Send</button>
+                    <div class="input-wrapper">
+                        <span class="input-prefix">>&nbsp;</span>
+                        <input type="text" id="name" placeholder="Enter your handle" autocomplete="off" class="form-control cyber-input" />
                     </div>
                 </div>
+                <div class="form-group">
+                    <button type="submit" class="cyber-button primary">
+                        <span class="button-text">CONNECT TO NETWORK</span>
+                        <div class="button-glow"></div>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="/static/js/main.js"></script>
+<!-- Chat Page -->
+<div id="chat-page" class="hidden">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="status-indicator online"></div>
+                <div class="header-info">
+                    <h2>CYBERNET MAINFRAME</h2>
+                    <div class="connection-info">Secure WebSocket Connection</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="network-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">USERS</span>
+                        <span class="stat-value" id="user-count">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LATENCY</span>
+                        <span class="stat-value">< 20ms</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="connecting">
+            <div class="connecting-animation">
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <p>Establishing secure connection...</p>
+        </div>
+
+        <ul id="messageArea" class="message-area">
+            <!-- Chat messages will appear here -->
+        </ul>
+        <form id="messageForm" name="messageForm" class="message-form">
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="message-input-wrapper">
+                        <span class="input-prefix">>&nbsp;</span>
+                        <input type="text" id="message" placeholder="Type your message..." autocomplete="off" class="form-control cyber-input message-input" />
+                        <div class="input-glow"></div>
+                    </div>
+                    <button type="submit" class="cyber-button send-button">
+                        <span class="button-text">SEND</span>
+                        <div class="button-glow"></div>
+                    </button>
+                </div>
+            </div>
+            <div class="chat-body">
+                <!-- Online Users Sidebar -->
+                <div class="online-users-panel">
+                    <div class="users-header">🟢 ONLINE USERS</div>
+                    <ul id="online-users" class="online-user-list">
+                        <!-- Filled dynamically via JS -->
+                    </ul>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="js/main.js"></script>
+<!--<ul id="online-users" class="online-user-list"></ul>-->
+
 </body>
 </html>
