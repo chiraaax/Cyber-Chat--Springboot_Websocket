@@ -47,16 +47,29 @@ public class ChatController {
                 .build());
     }
 
+    @MessageMapping("/ping")
+    public void handlePing(SimpMessageHeaderAccessor headerAccessor) {
+        // Simply reply to the user on a private topic
+        String sessionId = headerAccessor.getSessionId();
+        messagingTemplate.convertAndSend("/topic/pong", "pong:" + sessionId);
+    }
+
+
 
     @MessageMapping("/chat.addUser")
     public void addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         String username = chatMessage.getSender();
         String sessionId = headerAccessor.getSessionId();
 
-        // Store username in session map
-        sessionUserMap.put(sessionId, username);
+        // ✅ Prevent duplicate usernames
+        if (sessionUserMap.containsValue(username)) {
+            // Send error to specific user using private channel
+            messagingTemplate.convertAndSendToUser(sessionId, "/queue/errors", "DUPLICATE_USERNAME");
+            return;
+        }
 
-        // Store username in WebSocket session attributes
+        // Store session and username
+        sessionUserMap.put(sessionId, username);
         headerAccessor.getSessionAttributes().put("username", username);
 
         // Send join message
@@ -65,10 +78,11 @@ public class ChatController {
                 .sender(username)
                 .build());
 
-        // Broadcast updated user count
+        // Update clients
         broadcastUserList();
         broadcastUserCount();
     }
+
 
     private void broadcastUserList() {
         List<String> users = new ArrayList<>(sessionUserMap.values());

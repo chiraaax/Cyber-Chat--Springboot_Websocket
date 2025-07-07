@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>CyberNet Terminal - Secure Communication Hub</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CyberNet Terminal - A secure cyberpunk-themed communication hub for real-time chat">
+    <meta name="theme-color" content="#00ff41">
 
     <!-- Styles -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
     <link rel="stylesheet" href="css/main.css">
 
     <!-- Fonts -->
@@ -15,86 +17,103 @@
 <body>
 
 <!-- Animated Background -->
-<div class="cyber-background">
+<div class="cyber-background" aria-hidden="true">
     <div class="grid-lines"></div>
     <div class="floating-particles"></div>
     <div class="scan-lines"></div>
 </div>
 
 <!-- Username Page -->
-<div id="username-page">
+<main id="username-page" role="main">
     <div class="username-page-container">
-        <div class="terminal-header">
-            <div class="terminal-controls">
-                <span class="control-dot red"></span>
-                <span class="control-dot yellow"></span>
-                <span class="control-dot green"></span>
+        <header class="terminal-header">
+            <div class="terminal-controls" aria-label="Terminal window controls">
+                <span class="control-dot red" aria-label="Close"></span>
+                <span class="control-dot yellow" aria-label="Minimize"></span>
+                <span class="control-dot green" aria-label="Maximize"></span>
             </div>
             <div class="terminal-title">CYBERNET_TERMINAL_V2.1</div>
-        </div>
+        </header>
 
         <div class="terminal-content">
             <div class="cyber-logo">
-                <div class="logo-icon">⚡</div>
+                <div class="logo-icon" aria-hidden="true">⚡</div>
                 <h1 class="title">CYBERNET TERMINAL</h1>
                 <div class="subtitle">SECURE COMMUNICATION HUB</div>
             </div>
 
-            <div class="access-prompt">
+            <div class="access-prompt" role="status" aria-live="polite">
                 <p class="prompt-text">[SYSTEM] Authentication required...</p>
                 <p class="prompt-text">[SYSTEM] Enter your handle to access the network</p>
             </div>
 
-            <form id="usernameForm" name="usernameForm">
+            <form id="usernameForm" name="usernameForm" aria-label="Username authentication form">
                 <div class="form-group">
+                    <label for="name" class="visually-hidden">Enter your username handle</label>
                     <div class="input-wrapper">
-                        <span class="input-prefix">>&nbsp;</span>
-                        <input type="text" id="name" placeholder="Enter your handle" autocomplete="off" class="form-control cyber-input" />
+                        <span class="input-prefix" aria-hidden="true">>&nbsp;</span>
+                        <input
+                                type="text"
+                                id="name"
+                                name="username"
+                                placeholder="Enter your handle"
+                                autocomplete="username"
+                                class="form-control cyber-input"
+                                required
+                                minlength="2"
+                                maxlength="20"
+                                aria-describedby="username-requirements"
+                        />
+                    </div>
+                    <div id="username-requirements" class="input-help visually-hidden">
+                        Username must be 2-20 characters long
                     </div>
                 </div>
                 <div class="form-group">
-                    <button type="submit" class="cyber-button primary">
+                    <button type="submit" class="cyber-button primary" aria-describedby="connect-help">
                         <span class="button-text">CONNECT TO NETWORK</span>
-                        <div class="button-glow"></div>
+                        <div class="button-glow" aria-hidden="true"></div>
                     </button>
+                    <div id="connect-help" class="visually-hidden">
+                        Press Enter or click to connect to the CyberNet terminal
+                    </div>
                 </div>
             </form>
         </div>
     </div>
-</div>
+</main>
 
 <!-- Chat Page -->
-<div id="chat-page" class="hidden">
+<main id="chat-page" class="hidden" role="main">
     <div class="chat-container">
-        <div class="chat-header">
+        <header class="chat-header">
             <div class="header-left">
-                <div class="status-indicator online"></div>
+                <div class="status-indicator online" aria-label="Connection status: Online"></div>
                 <div class="header-info">
                     <h2>CYBERNET MAINFRAME</h2>
                     <div class="connection-info">Secure WebSocket Connection</div>
                 </div>
             </div>
             <div class="header-right">
-                <div class="network-stats">
+                <div class="network-stats" role="status" aria-live="polite">
                     <div class="stat-item">
                         <span class="stat-label">USERS</span>
-                        <span class="stat-value" id="user-count">1</span>
+                        <span class="stat-value" id="user-count" aria-label="Connected users count">1</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">LATENCY</span>
-                        <span class="stat-value">< 20ms</span>
+                        <span class="stat-value" id="latency" aria-label="Network latency">--</span>
                     </div>
                 </div>
-                <!-- Close Button Added Here -->
-                <button id="close-btn" class="cyber-button small danger">
-                    <span class="button-text">X</span>
-                    <div class="button-glow"></div>
+                <button id="close-btn" class="cyber-button small danger" aria-label="Disconnect from network">
+                    <span class="button-text">✕</span>
+                    <div class="button-glow" aria-hidden="true"></div>
                 </button>
             </div>
-        </div>
+        </header>
 
-        <div class="connecting">
-            <div class="connecting-animation">
+        <div class="connecting" role="status" aria-live="assertive" aria-label="Connection status">
+            <div class="connecting-animation" aria-hidden="true">
                 <div class="loading-dots">
                     <span></span>
                     <span></span>
@@ -104,36 +123,67 @@
             <p>Establishing secure connection...</p>
         </div>
 
-        <ul id="messageArea" class="message-area">
-            <!-- Chat messages will appear here -->
-        </ul>
-        <div id="typing-indicator" class="typing-indicator"></div>
-
-        <form id="messageForm" name="messageForm" class="message-form">
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="message-input-wrapper">
-                        <span class="input-prefix">>&nbsp;</span>
-                        <input type="text" id="message" placeholder="Type your message..." autocomplete="off" class="form-control cyber-input message-input" />
-                        <div class="input-glow"></div>
-                    </div>
-                    <button type="submit" class="cyber-button send-button">
-                        <span class="button-text">SEND</span>
-                        <div class="button-glow"></div>
-                    </button>
-                </div>
-            </div>
-            <div class="chat-body">
-                <!-- Online Users Sidebar -->
-                <div class="online-users-panel">
-                    <div class="users-header">🟢 ONLINE USERS</div>
-                    <ul id="online-users" class="online-user-list">
-                        <!-- Filled dynamically via JS -->
+        <div class="chat-body">
+            <div class="chat-main">
+                <section class="messages-section" aria-label="Chat messages">
+                    <ul id="messageArea" class="message-area" role="log" aria-live="polite" aria-label="Chat conversation">
+                        <!-- Chat messages will appear here -->
                     </ul>
-                </div>
-            </div>
-        </form>
+                    <div id="typing-indicator" class="typing-indicator" role="status" aria-live="polite" aria-label="Typing indicator">
+                        <!-- Typing indicator content -->
+                    </div>
+                </section>
 
+                <form id="messageForm" name="messageForm" class="message-form" aria-label="Send message form">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <label for="message" class="visually-hidden">Type your message</label>
+                            <div class="message-input-wrapper">
+                                <span class="input-prefix" aria-hidden="true">>&nbsp;</span>
+                                <input
+                                        type="text"
+                                        id="message"
+                                        name="message"
+                                        placeholder="Type your message..."
+                                        autocomplete="off"
+                                        class="form-control cyber-input message-input"
+                                        maxlength="500"
+                                        aria-describedby="message-help"
+                                />
+                                <div class="input-glow" aria-hidden="true"></div>
+                            </div>
+                            <button type="submit" class="cyber-button send-button" aria-label="Send message">
+                                <span class="button-text">SEND</span>
+                                <div class="button-glow" aria-hidden="true"></div>
+                            </button>
+                        </div>
+                        <div id="message-help" class="input-help visually-hidden">
+                            Maximum 500 characters. Press Enter to send.
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Online Users Sidebar -->
+            <aside class="online-users-panel" aria-label="Online users">
+                <h3 class="users-header">
+                    <span class="status-dot" aria-hidden="true">🟢</span>
+                    <span>ONLINE USERS</span>
+                </h3>
+                <ul id="online-users" class="online-user-list" role="list" aria-live="polite">
+                    <!-- Filled dynamically via JS -->
+                </ul>
+            </aside>
+        </div>
+    </div>
+</main>
+
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay hidden" role="status" aria-live="polite">
+    <div class="loading-content">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p>Processing...</p>
     </div>
 </div>
 

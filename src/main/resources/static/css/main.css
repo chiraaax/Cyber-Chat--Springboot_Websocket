@@ -157,25 +157,25 @@ body {
 }
 
 .online-users-panel {
-    width: 150px;
-    position: absolute;
-    right: 0;
-    top: 120px;
-    bottom: 140px;
+    width: 200px;
     background-color: rgba(0, 255, 65, 0.05);
     border-left: 1px solid rgba(0,255,65,0.2);
-    padding: 10px;
+    padding: 15px;
     overflow-y: auto;
     font-family: 'Rajdhani', monospace;
+    flex-shrink: 0;
 }
 
 .users-header {
     font-weight: bold;
     color: #00ffff;
-    margin-bottom: 8px;
-    font-size: 17px;
+    margin-bottom: 12px;
+    font-size: 16px;
     border-bottom: 1px solid rgba(0,255,65,0.2);
-    padding-bottom: 4px;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .online-user-list {
@@ -393,6 +393,105 @@ body {
 /* ===== CONNECT BUTTON RESET ===== */
 #username-page .cyber-button.primary {
     transition: all 0.3s ease;
+}
+
+/* Accessibility Utilities */
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.input-help {
+    font-size: 12px;
+    color: rgba(0, 255, 65, 0.6);
+    font-family: 'Rajdhani', monospace;
+    margin-top: 5px;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.loading-content {
+    text-align: center;
+    color: #00ff41;
+    font-family: 'Rajdhani', monospace;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 255, 65, 0.3);
+    border-top: 3px solid #00ff41;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Chat Body Layout */
+.chat-body {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.messages-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.status-dot {
+    font-size: 12px;
+}
+
+/* Responsive Updates for New Layout */
+@media screen and (max-width: 768px) {
+    .chat-body {
+        flex-direction: column;
+    }
+
+    .online-users-panel {
+        width: 100%;
+        max-height: 120px;
+        order: -1;
+    }
+
+    .users-header {
+        font-size: 14px;
+    }
 }
 
 /* Buttons */
@@ -1006,13 +1105,12 @@ body {
     font-size: 14px;
 }
 
-/* Message Area */
+/* Updated Message Area */
 .message-area {
     flex: 1;
     list-style: none;
     margin: 0;
     padding: 0;
-    padding-right: 220px;
     overflow-y: auto;
     background: rgba(0, 0, 0, 0.3);
     border-bottom: 1px solid rgba(0, 255, 65, 0.2);
@@ -1098,10 +1196,11 @@ body {
     line-height: 1.4;
 }
 
-/* Message Form */
+/* Updated Message Form */
 .message-form {
     padding: 20px;
     background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(0, 255, 65, 0.2);
 }
 
 .input-group {
