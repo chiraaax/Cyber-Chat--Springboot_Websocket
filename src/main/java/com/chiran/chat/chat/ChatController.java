@@ -31,6 +31,23 @@ public class ChatController {
         return chatMessage;
     }
 
+    @MessageMapping("/chat.typing")
+    public void typing(@Payload ChatMessage message) {
+        messagingTemplate.convertAndSend("/topic/typing", ChatMessage.builder()
+                .type(MessageType.TYPING)
+                .sender(message.getSender())
+                .build());
+    }
+
+    @MessageMapping("/chat.stopTyping")
+    public void stopTyping(@Payload ChatMessage message) {
+        messagingTemplate.convertAndSend("/topic/typing", ChatMessage.builder()
+                .type(MessageType.STOP_TYPING)
+                .sender(message.getSender())
+                .build());
+    }
+
+
     @MessageMapping("/chat.addUser")
     public void addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         String username = chatMessage.getSender();

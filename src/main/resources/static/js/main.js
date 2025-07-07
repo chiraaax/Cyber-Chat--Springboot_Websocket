@@ -1,23 +1,28 @@
 'use strict';
 
 // DOM Elements
-var usernamePage = document.querySelector('#username-page');
-var chatPage = document.querySelector('#chat-page');
-var usernameForm = document.querySelector('#usernameForm');
-var messageForm = document.querySelector('#messageForm');
-var messageInput = document.querySelector('#message');
-var messageArea = document.querySelector('#messageArea');
-var connectingElement = document.querySelector('.connecting');
-var userCountElement = document.querySelector('#user-count');
+const usernamePage = document.querySelector('#username-page');
+const chatPage = document.querySelector('#chat-page');
+const usernameForm = document.querySelector('#usernameForm');
+const messageForm = document.querySelector('#messageForm');
+const messageInput = document.querySelector('#message');
+const messageArea = document.querySelector('#messageArea');
+const connectingElement = document.querySelector('.connecting');
+const userCountElement = document.querySelector('#user-count');
+const typingIndicator = document.querySelector('#typing-indicator');
 
 // WebSocket and Chat Variables
-var stompClient = null;
-var username = null;
-var userCount = 0;
-var isConnected = false;
+let stompClient = null;
+let username = null;
+let userCount = 0;
+let isConnected = false;
 
-// Color palette
-var colors = [
+// Typing state
+let typingTimer = null;
+const currentlyTyping = new Set();
+
+// Colors
+const colors = [
     '#00ff41', '#00ffff', '#ff0080', '#ff4081',
     '#ffff00', '#ff6600', '#8000ff', '#00ff80',
     '#ff0040', '#40ff00', '#0080ff', '#ff8000'
@@ -28,7 +33,7 @@ function init() {
     usernameForm.addEventListener('submit', connect, true);
     messageForm.addEventListener('submit', sendMessage, true);
     messageInput.addEventListener('input', handleTyping);
-    messageInput.addEventListener('keypress', function(e) {
+    messageInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessage(e);
@@ -36,58 +41,6 @@ function init() {
     });
     initializeCyberEffects();
     document.querySelector('#name')?.focus();
-}
-
-function initializeCyberEffects() {
-    setInterval(() => {
-        const title = document.querySelector('.title');
-        if (title && Math.random() < 0.1) {
-            title.style.textShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
-            setTimeout(() => {
-                title.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.5)';
-            }, 100);
-        }
-    }, 2000);
-    createMatrixEffect();
-}
-
-function createMatrixEffect() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.style = `
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        pointer-events: none;
-        opacity: 0.1;
-        z-index: -1;
-    `;
-    document.body.appendChild(canvas);
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
-    const fontSize = 10;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#00ff41';
-        ctx.font = fontSize + 'px monospace';
-
-        drops.forEach((y, x) => {
-            const text = matrix[Math.floor(Math.random() * matrix.length)];
-            ctx.fillText(text, x * fontSize, y * fontSize);
-            drops[x] = (y * fontSize > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
-        });
-    }
-
-    setInterval(drawMatrix, 35);
 }
 
 function connect(event) {
@@ -110,36 +63,18 @@ function connect(event) {
     event.preventDefault();
 }
 
-function onUserListReceived(payload) {
-    let users;
-    try {
-        users = JSON.parse(payload.body);
-    } catch (e) {
-        console.error('Invalid user list:', e);
-        return;
-    }
-
-    const userListElement = document.getElementById('online-users');
-    userListElement.innerHTML = '';
-
-    users.forEach(name => {
-        const li = document.createElement('li');
-        li.textContent = name;
-        li.style.padding = '5px 10px';
-        li.style.borderBottom = '1px solid rgba(0,255,65,0.1)';
-        li.style.color = '#00ff80';
-        userListElement.appendChild(li);
-    });
-}
-
 function onConnected() {
     isConnected = true;
+
     stompClient.subscribe('/topic/public', onMessageReceived);
     stompClient.subscribe('/topic/users', onUserListReceived);
+    stompClient.subscribe('/topic/typing', onTypingReceived);
+
     stompClient.send("/app/chat.addUser", {}, JSON.stringify({
         sender: username,
         type: 'JOIN'
     }));
+
     connectingElement.classList.add('hidden');
     displaySystemMessage('Connected to CYBERNET MAINFRAME');
     displaySystemMessage('Welcome to the secure channel, ' + username);
@@ -148,12 +83,12 @@ function onConnected() {
 
 function onError(error) {
     isConnected = false;
-    connectingElement.innerHTML = `
-        <div class="connecting-animation">
+    connectingElement.innerHTML =
+        `<div class="connecting-animation">
             <div class="loading-dots"><span></span><span></span><span></span></div>
         </div>
-        <p style="color: #ff0040;">CONNECTION FAILED - Network unreachable</p>
-    `;
+        <p style="color: #ff0040;">CONNECTION FAILED - Network unreachable</p>`;
+
     const retryButton = document.createElement('button');
     retryButton.textContent = 'RETRY CONNECTION';
     retryButton.className = 'cyber-button primary';
@@ -162,21 +97,70 @@ function onError(error) {
     connectingElement.appendChild(retryButton);
 }
 
-var typingTimer = null;
+// Handle typing
 function handleTyping() {
     if (isConnected && stompClient) {
         clearTimeout(typingTimer);
+
         try {
-            stompClient.send("/app/chat.typing", {}, JSON.stringify({ sender: username, type: 'TYPING' }));
+            stompClient.send("/app/chat.typing", {}, JSON.stringify({
+                sender: username,
+                type: 'TYPING'
+            }));
         } catch (e) {}
+
         typingTimer = setTimeout(() => {
             try {
-                stompClient.send("/app/chat.stopTyping", {}, JSON.stringify({ sender: username, type: 'STOP_TYPING' }));
+                stompClient.send("/app/chat.stopTyping", {}, JSON.stringify({
+                    sender: username,
+                    type: 'STOP_TYPING'
+                }));
             } catch (e) {}
         }, 2000);
     }
 }
 
+// Receive typing indicators
+function onTypingReceived(payload) {
+    let message;
+    try {
+        message = JSON.parse(payload.body);
+    } catch (e) {
+        console.error('Invalid typing message:', e);
+        return;
+    }
+
+    if (message.sender === username) return;
+
+    if (message.type === 'TYPING') {
+        currentlyTyping.add(message.sender);
+    } else if (message.type === 'STOP_TYPING') {
+        currentlyTyping.delete(message.sender);
+    }
+
+    updateTypingIndicator();
+}
+
+function updateTypingIndicator() {
+    if (!typingIndicator) return;
+    const users = Array.from(currentlyTyping);
+
+    if (users.length === 0) {
+        typingIndicator.style.display = 'none';
+        typingIndicator.textContent = '';
+    } else {
+        const isSingle = users.length === 1;
+        const nameList = users.join(', ');
+        typingIndicator.innerHTML =
+            `${nameList} ${isSingle ? 'is' : 'are'} typing
+            <span class="typing-dots">
+                <span>.</span><span>.</span><span>.</span>
+            </span>`;
+        typingIndicator.style.display = 'block';
+    }
+}
+
+// Send message
 function sendMessage(event) {
     const messageContent = messageInput.value.trim();
     if (messageContent && stompClient && isConnected) {
@@ -198,6 +182,7 @@ function sendMessage(event) {
     event.preventDefault();
 }
 
+// Handle all messages
 function onMessageReceived(payload) {
     let message;
     try {
@@ -263,6 +248,28 @@ function onMessageReceived(payload) {
     }, 50);
 }
 
+// Handle online user list
+function onUserListReceived(payload) {
+    let users;
+    try {
+        users = JSON.parse(payload.body);
+    } catch (e) {
+        console.error('Invalid user list:', e);
+        return;
+    }
+
+    const userListElement = document.getElementById('online-users');
+    userListElement.innerHTML = '';
+    users.forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        li.style.padding = '5px 10px';
+        li.style.borderBottom = '1px solid rgba(0,255,65,0.1)';
+        li.style.color = '#00ff80';
+        userListElement.appendChild(li);
+    });
+}
+
 function displaySystemMessage(content) {
     const messageElement = document.createElement('li');
     messageElement.classList.add('event-message');
@@ -292,13 +299,68 @@ function formatTimestamp(timestamp) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-function getAvatarColor(messageSender) {
+function getAvatarColor(sender) {
     let hash = 0;
-    for (let i = 0; i < messageSender.length; i++) {
-        hash = 31 * hash + messageSender.charCodeAt(i);
+    for (let i = 0; i < sender.length; i++) {
+        hash = 31 * hash + sender.charCodeAt(i);
     }
     const index = Math.abs(hash % colors.length);
     return colors[index];
+}
+
+// Cyber matrix animation
+function initializeCyberEffects() {
+    setInterval(() => {
+        const title = document.querySelector('.title');
+        if (title && Math.random() < 0.1) {
+            title.style.textShadow = '0 0 20px rgba(255, 0, 0, 0.8)';
+            setTimeout(() => {
+                title.style.textShadow = '0 0 20px rgba(0, 255, 65, 0.5)';
+            }, 100);
+        }
+    }, 2000);
+    createMatrixEffect();
+}
+
+function createMatrixEffect() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        opacity: 0.1;
+        z-index: -1;
+    `;
+    document.body.appendChild(canvas);
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
+    const fontSize = 10;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#00ff41';
+        ctx.font = fontSize + 'px monospace';
+
+        drops.forEach((y, x) => {
+            const text = matrix[Math.floor(Math.random() * matrix.length)];
+            ctx.fillText(text, x * fontSize, y * fontSize);
+            drops[x] = (y * fontSize > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+        });
+    }
+
+    setInterval(drawMatrix, 35);
 }
 
 window.addEventListener('resize', () => {

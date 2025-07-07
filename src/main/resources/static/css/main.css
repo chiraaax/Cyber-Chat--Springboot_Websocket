@@ -160,12 +160,11 @@ body {
     width: 150px;
     position: absolute;
     right: 0;
-    top: 0;
-    bottom: 0;
+    top: 120px;
+    bottom: 140px;
     background-color: rgba(0, 255, 65, 0.05);
     border-left: 1px solid rgba(0,255,65,0.2);
     padding: 10px;
-    padding-top: 130px;
     overflow-y: auto;
     font-family: 'Rajdhani', monospace;
 }
@@ -190,6 +189,46 @@ body {
     padding: 6px 0;
     border-bottom: 1px dotted rgba(0, 255, 65, 0.1);
     font-size: 15px;
+}
+
+.typing-indicator {
+    font-family: 'Rajdhani', monospace;
+    font-size: 16px;
+    color: #00ffcc;
+    padding: 6px 16px;
+    margin: 6px 0 4px 0;
+    font-style: italic;
+    text-shadow:
+        0 0 4px #00ffcc,
+        0 0 8px #00ffcc,
+        0 0 12px #00ffcc;
+    animation: flicker 1.8s infinite alternate;
+    opacity: 0.85;
+}
+
+@keyframes flicker {
+    0%   { opacity: 1; text-shadow: 0 0 4px #00ffcc; }
+    50%  { opacity: 0.4; text-shadow: 0 0 8px #00ffaa; }
+    100% { opacity: 1; text-shadow: 0 0 12px #00ffcc; }
+}
+
+.typing-dots span {
+    animation: blink 1.5s infinite;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0 1px;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0.2; }
+    50%      { opacity: 1; }
 }
 
 /* Buttons */
