@@ -10,6 +10,7 @@ const messageArea = document.querySelector('#messageArea');
 const connectingElement = document.querySelector('.connecting');
 const userCountElement = document.querySelector('#user-count');
 const typingIndicator = document.querySelector('#typing-indicator');
+const closeBtn = document.querySelector('#close-btn'); // Close button
 
 // WebSocket and Chat Variables
 let stompClient = null;
@@ -41,6 +42,9 @@ function init() {
     });
     initializeCyberEffects();
     document.querySelector('#name')?.focus();
+
+    // Add event listener for close button
+    closeBtn.addEventListener('click', disconnectAndReset);
 }
 
 function connect(event) {
@@ -87,14 +91,15 @@ function onError(error) {
         `<div class="connecting-animation">
             <div class="loading-dots"><span></span><span></span><span></span></div>
         </div>
-        <p style="color: #ff0040;">CONNECTION FAILED - Network unreachable</p>`;
+        <p style="color: #ff0040;">CONNECTION FAILED - Network unreachable</p>
+        <button id="reconnect-btn" class="cyber-button primary" style="margin-top: 15px;">
+            <span class="button-text">RETRY CONNECTION</span>
+            <div class="button-glow"></div>
+        </button>`;
 
-    const retryButton = document.createElement('button');
-    retryButton.textContent = 'RETRY CONNECTION';
-    retryButton.className = 'cyber-button primary';
-    retryButton.style.marginTop = '15px';
-    retryButton.onclick = () => location.reload();
-    connectingElement.appendChild(retryButton);
+    document.getElementById('reconnect-btn').addEventListener('click', () => {
+        location.reload();
+    });
 }
 
 // Handle typing
@@ -194,12 +199,13 @@ function onMessageReceived(payload) {
 
     const messageElement = document.createElement('li');
 
-    if (message.type === 'JOIN' || message.type === 'LEAVE') {
+    if (message.type === 'JOIN') {
         messageElement.classList.add('event-message');
-        const text = message.type === 'JOIN'
-            ? `[SYSTEM] User ${message.sender} has joined the network`
-            : `[SYSTEM] User ${message.sender} has disconnected`;
-        messageElement.innerHTML = `<p>${text}</p>`;
+        messageElement.innerHTML = `<p>[SYSTEM] User ${message.sender} has joined the network</p>`;
+    }
+    else if (message.type === 'LEAVE') {
+        messageElement.classList.add('event-message');
+        messageElement.innerHTML = `<p>[SYSTEM] User ${message.sender} has disconnected</p>`;
     }
     else if (message.type === 'CHAT') {
         messageElement.classList.add('chat-message');
@@ -308,6 +314,49 @@ function getAvatarColor(sender) {
     return colors[index];
 }
 
+// Disconnect and reset function
+function disconnectAndReset() {
+    if (isConnected && stompClient) {
+        try {
+            // Send leave notification
+            stompClient.send("/app/chat.leave", {}, JSON.stringify({
+                sender: username,
+                type: 'LEAVE'
+            }));
+
+            // Disconnect from server
+            stompClient.disconnect();
+        } catch (e) {
+            console.log('Disconnect error', e);
+        }
+    }
+
+    isConnected = false;
+    username = null;
+
+    // Reset UI
+    chatPage.classList.add('hidden');
+    usernamePage.classList.remove('hidden');
+    messageArea.innerHTML = '';
+    document.getElementById('online-users').innerHTML = '';
+
+    // Reset connect button
+    const connectButton = document.querySelector('.cyber-button.primary');
+    if (connectButton) {
+        connectButton.textContent = 'CONNECT TO NETWORK';
+        connectButton.disabled = false;
+    }
+
+    // Reset username field
+    const nameInput = document.getElementById('name');
+    nameInput.value = '';
+    nameInput.focus();
+
+    // Clear typing indicators
+    currentlyTyping.clear();
+    updateTypingIndicator();
+}
+
 // Cyber matrix animation
 function initializeCyberEffects() {
     setInterval(() => {
@@ -363,6 +412,8 @@ function createMatrixEffect() {
     setInterval(drawMatrix, 35);
 }
 
+
+
 window.addEventListener('resize', () => {
     const canvas = document.querySelector('canvas');
     if (canvas) {
@@ -372,10 +423,12 @@ window.addEventListener('resize', () => {
 });
 
 document.addEventListener('visibilitychange', () => {
-    const type = document.hidden ? 'AWAY' : 'BACK';
-    if (stompClient && isConnected && stompClient.connected) {
+    if (document.hidden && isConnected) {
         try {
-            stompClient.send(`/app/chat.${type.toLowerCase()}`, {}, JSON.stringify({ sender: username, type }));
+            stompClient.send("/app/chat.leave", {}, JSON.stringify({
+                sender: username,
+                type: 'LEAVE'
+            }));
         } catch (e) {}
     }
 });

@@ -231,6 +231,170 @@ body {
     50%      { opacity: 1; }
 }
 
+/* ===== CLOSE BUTTON STYLES ===== */
+#close-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: linear-gradient(145deg, #ff0040, #cc0033);
+    border: 1px solid #ff0040;
+    margin-left: 15px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+#close-btn .button-text {
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 64, 0.8);
+    position: relative;
+    z-index: 2;
+}
+
+#close-btn .button-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,0,64,0.6) 0%, rgba(255,0,64,0) 70%);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+#close-btn:hover {
+    background: linear-gradient(145deg, #ff1a53, #cc0033);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 64, 0.4);
+}
+
+#close-btn:hover .button-glow {
+    opacity: 0.9;
+}
+
+#close-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(255, 0, 64, 0.3);
+}
+
+/* Header adjustments to fit close button */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.network-stats {
+    display: flex;
+    gap: 20px;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    #close-btn {
+        width: 30px;
+        height: 30px;
+        margin-left: 10px;
+    }
+
+    #close-btn .button-text {
+        font-size: 14px;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+
+    .network-stats {
+        gap: 10px;
+    }
+
+    .stat-item {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-header {
+        flex-wrap: wrap;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .network-stats {
+        margin-right: auto;
+    }
+}
+
+/* ===== DISCONNECT ANIMATION EFFECTS ===== */
+@keyframes terminalShutdown {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    70% {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+.chat-page-hidden {
+    animation: terminalShutdown 0.4s ease forwards;
+}
+
+/* ===== SYSTEM MESSAGE STYLES ===== */
+.event-message {
+    color: #00ffff;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    border-left: 2px solid #00ffff;
+    padding-left: 10px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+}
+
+/* ===== USER LIST STYLES ===== */
+.online-user-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.online-user-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.online-user-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.online-user-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 65, 0.5);
+    border-radius: 3px;
+}
+
+.online-user-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 65, 0.8);
+}
+
+/* ===== CONNECT BUTTON RESET ===== */
+#username-page .cyber-button.primary {
+    transition: all 0.3s ease;
+}
+
 /* Buttons */
 .cyber-button {
     position: relative;
@@ -356,13 +520,328 @@ body {
     50% { transform: scale(1.1); opacity: 0.8; }
 }
 
+/* MILITARY CYBER GLITCH TITLE STYLES */
 .title {
     font-family: 'Orbitron', monospace;
     font-size: 2.5em;
     font-weight: 900;
     margin: 0 0 10px 0;
-    text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
     letter-spacing: 3px;
+    position: relative;
+    text-transform: uppercase;
+    color: #00ff41;
+    text-shadow:
+        0 0 20px rgba(0, 255, 65, 0.8),
+        0 0 40px rgba(0, 255, 65, 0.6),
+        0 0 60px rgba(0, 255, 65, 0.4);
+    animation:
+            textFlicker 0.15s ease-in-out infinite alternate,
+            scanlineGlow 2s ease-in-out infinite;
+}
+
+/* Create military-style glitch layers */
+.title::before,
+.title::after {
+    content: 'CYBERNET TERMINAL';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Orbitron', monospace;
+    font-size: 1em;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.title::before {
+    color: #00aa33;
+    animation: glitchLayerA 3s infinite;
+    z-index: -1;
+    text-shadow: 0 0 15px #00aa33;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.title::after {
+    color: #33ff66;
+    animation: glitchLayerB 2.5s infinite;
+    z-index: -2;
+    text-shadow: 0 0 15px #33ff66;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+/* Main terminal glitch animation */
+@keyframes terminalGlitch {
+    0%, 85%, 100% {
+        transform: translate(0, 0);
+        filter: hue-rotate(0deg);
+    }
+    5% {
+        transform: translate(-3px, 0);
+        filter: hue-rotate(5deg);
+    }
+    10% {
+        transform: translate(3px, 0);
+        filter: hue-rotate(-5deg);
+    }
+    15% {
+        transform: translate(-2px, 0);
+        filter: hue-rotate(3deg);
+    }
+    20% {
+        transform: translate(2px, 0);
+        filter: hue-rotate(-3deg);
+    }
+    25% {
+        transform: translate(-4px, 0);
+        filter: hue-rotate(7deg);
+    }
+    30% {
+        transform: translate(4px, 0);
+        filter: hue-rotate(-7deg);
+    }
+    35% {
+        transform: translate(-1px, 0);
+        filter: hue-rotate(2deg);
+    }
+    40% {
+        transform: translate(1px, 0);
+        filter: hue-rotate(-2deg);
+    }
+    45% {
+        transform: translate(-3px, 0);
+        filter: hue-rotate(6deg);
+    }
+    50% {
+        transform: translate(3px, 0);
+        filter: hue-rotate(-6deg);
+    }
+    55% {
+        transform: translate(-2px, 0);
+        filter: hue-rotate(4deg);
+    }
+    60% {
+        transform: translate(2px, 0);
+        filter: hue-rotate(-4deg);
+    }
+}
+
+/* Layer A glitch (top portion) */
+@keyframes glitchLayerA {
+    0%, 80%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.8;
+    }
+    10% {
+        transform: translate(-5px, 0);
+        opacity: 0.6;
+    }
+    20% {
+        transform: translate(5px, 0);
+        opacity: 0.4;
+    }
+    30% {
+        transform: translate(-3px, 0);
+        opacity: 0.7;
+    }
+    40% {
+        transform: translate(3px, 0);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(-6px, 0);
+        opacity: 0.9;
+    }
+    60% {
+        transform: translate(6px, 0);
+        opacity: 0.3;
+    }
+    70% {
+        transform: translate(-2px, 0);
+        opacity: 0.8;
+    }
+}
+
+/* Layer B glitch (bottom portion) */
+@keyframes glitchLayerB {
+    0%, 75%, 100% {
+        transform: translate(0, 0);
+        opacity: 0.7;
+    }
+    15% {
+        transform: translate(4px, 0);
+        opacity: 0.5;
+    }
+    25% {
+        transform: translate(-4px, 0);
+        opacity: 0.8;
+    }
+    35% {
+        transform: translate(6px, 0);
+        opacity: 0.4;
+    }
+    45% {
+        transform: translate(-6px, 0);
+        opacity: 0.9;
+    }
+    55% {
+        transform: translate(3px, 0);
+        opacity: 0.3;
+    }
+    65% {
+        transform: translate(-3px, 0);
+        opacity: 0.7;
+    }
+}
+
+
+
+/* Scanline glow effect */
+@keyframes scanlineGlow {
+    0% {
+        box-shadow:
+            inset 0 0 0 0 rgba(0, 255, 65, 0.1),
+            0 0 50px rgba(0, 255, 65, 0.3);
+    }
+    50% {
+        box-shadow:
+            inset 0 0 20px 0 rgba(0, 255, 65, 0.2),
+            0 0 60px rgba(0, 255, 65, 0.5);
+    }
+    100% {
+        box-shadow:
+            inset 0 0 0 0 rgba(0, 255, 65, 0.1),
+            0 0 50px rgba(0, 255, 65, 0.3);
+    }
+}
+
+/* Data corruption effect (for intense glitches) */
+.title.data-corrupt {
+    animation:
+        terminalCorruption 0.8s ease-in-out,
+        terminalGlitch 4s ease-in-out infinite,
+        textFlicker 0.1s ease-in-out infinite alternate,
+        scanlineGlow 2s ease-in-out infinite;
+}
+
+@keyframes terminalCorruption {
+    0% {
+        transform: translate(0, 0) scaleX(1);
+        letter-spacing: 3px;
+    }
+    8% {
+        transform: translate(-8px, 0) scaleX(1.1);
+        letter-spacing: 8px;
+    }
+    16% {
+        transform: translate(8px, 0) scaleX(0.9);
+        letter-spacing: 1px;
+    }
+    24% {
+        transform: translate(-4px, 0) scaleX(1.05);
+        letter-spacing: 6px;
+    }
+    32% {
+        transform: translate(4px, 0) scaleX(0.95);
+        letter-spacing: 2px;
+    }
+    40% {
+        transform: translate(-6px, 0) scaleX(1.08);
+        letter-spacing: 7px;
+    }
+    48% {
+        transform: translate(6px, 0) scaleX(0.92);
+        letter-spacing: 1px;
+    }
+    56% {
+        transform: translate(-3px, 0) scaleX(1.03);
+        letter-spacing: 5px;
+    }
+    64% {
+        transform: translate(3px, 0) scaleX(0.97);
+        letter-spacing: 2px;
+    }
+    72% {
+        transform: translate(-5px, 0) scaleX(1.06);
+        letter-spacing: 6px;
+    }
+    80% {
+        transform: translate(5px, 0) scaleX(0.94);
+        letter-spacing: 1px;
+    }
+    88% {
+        transform: translate(-2px, 0) scaleX(1.02);
+        letter-spacing: 4px;
+    }
+    96% {
+        transform: translate(2px, 0) scaleX(0.98);
+        letter-spacing: 2px;
+    }
+    100% {
+        transform: translate(0, 0) scaleX(1);
+        letter-spacing: 3px;
+    }
+}
+
+/* Enhanced hover effect */
+.title:hover {
+    animation:
+        terminalGlitch 1.5s ease-in-out infinite,
+        textFlicker 0.08s ease-in-out infinite alternate,
+        scanlineGlow 1s ease-in-out infinite;
+    color: #33ff66;
+    text-shadow:
+        0 0 30px rgba(51, 255, 102, 1),
+        0 0 50px rgba(51, 255, 102, 0.8),
+        0 0 70px rgba(51, 255, 102, 0.6);
+}
+
+/* Static interference lines */
+.title::before {
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(0, 255, 65, 0.1) 2%,
+        transparent 4%,
+        transparent 96%,
+        rgba(0, 255, 65, 0.1) 98%,
+        transparent 100%
+    );
+    animation:
+        staticLines 0.5s linear infinite,
+        glitchLayerA 3s infinite;
+}
+
+@keyframes staticLines {
+    0% { background-position: 0 0; }
+    100% { background-position: 100px 0; }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .title {
+        font-size: 1.8em;
+    }
+
+    .title::before,
+    .title::after {
+        font-size: 1em;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .title {
+        font-size: 1.5em;
+        letter-spacing: 2px;
+    }
+
+    .title::before,
+    .title::after {
+        font-size: 1em;
+        letter-spacing: 2px;
+    }
 }
 
 .subtitle {
