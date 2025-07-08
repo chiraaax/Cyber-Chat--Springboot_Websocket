@@ -226,11 +226,16 @@ function onMessageReceived(payload) {
     messageArea.scrollTop = messageArea.scrollHeight;
 
     messageElement.style.opacity = '0';
-    messageElement.style.transform = 'translateX(-20px)';
+    messageElement.style.cssText = `
+        opacity: 0;
+        transform: translateX(-30px) scale(0.95);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    `;
     setTimeout(() => {
-        messageElement.style.transition = 'all 0.3s ease';
-        messageElement.style.opacity = '1';
-        messageElement.style.transform = 'translateX(0)';
+        messageElement.style.cssText = `
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        `;
     }, 50);
 }
 
@@ -329,21 +334,53 @@ function disconnectAndReset() {
     }
 }
 
-// ------------------ Cyber Matrix Effects ---------------------
+// ------------------ Enhanced Cyber Matrix Effects ---------------------
 function initializeCyberEffects() {
+    // Enhanced title glitch effect with more variety
     setInterval(() => {
         const title = document.querySelector('.title');
-        if (title && Math.random() < 0.1) {
-            title.style.textShadow = '0 0 20px rgba(255,0,0,0.8)';
+        if (title && Math.random() < 0.15) {
+            const glitchType = Math.random();
+
+            if (glitchType < 0.3) {
+                // Red glitch
+                title.style.textShadow = '0 0 20px rgba(255,0,0,0.8), 2px 0 0 rgba(255,0,0,0.5)';
+                title.style.transform = 'translateX(2px)';
+            } else if (glitchType < 0.6) {
+                // Cyan glitch
+                title.style.textShadow = '0 0 20px rgba(0,255,255,0.8), -2px 0 0 rgba(0,255,255,0.5)';
+                title.style.transform = 'translateX(-2px)';
+            } else {
+                // Multi-color glitch
+                title.style.textShadow = '0 0 20px rgba(255,0,255,0.8), 1px 0 0 rgba(255,0,0,0.5), -1px 0 0 rgba(0,255,255,0.5)';
+                title.style.transform = 'skew(2deg)';
+            }
+
             setTimeout(() => {
                 title.style.textShadow = '0 0 20px rgba(0,255,65,0.5)';
-            }, 100);
+                title.style.transform = 'none';
+            }, 80 + Math.random() * 120);
         }
-    }, 2000);
-    createMatrixEffect();
+    }, 1500);
+
+    // Add subtle screen flicker effect
+    setInterval(() => {
+        if (Math.random() < 0.05) {
+            document.body.style.filter = 'brightness(1.1) contrast(1.1)';
+            setTimeout(() => {
+                document.body.style.filter = 'none';
+            }, 50);
+        }
+    }, 3000);
+
+    // Initialize enhanced matrix effect
+    createEnhancedMatrixEffect();
+
+    // Add floating UI elements glitch
+    initializeUIGlitches();
 }
 
-function createMatrixEffect() {
+function createEnhancedMatrixEffect() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -355,42 +392,227 @@ function createMatrixEffect() {
         width: 100%;
         height: 100%;
         pointer-events: none;
-        opacity: 0.1;
+        opacity: 0.4;
         z-index: -1;
+        mix-blend-mode: screen;
     `;
     document.body.appendChild(canvas);
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()";
-    const fontSize = 10;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-        ctx.fillStyle = 'rgba(0,0,0,0.04)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#0f0';
-        ctx.font = fontSize + 'px monospace';
-
-        drops.forEach((y, x) => {
-            const text = matrix[Math.floor(Math.random() * matrix.length)];
-            ctx.fillText(text, x * fontSize, y * fontSize);
-            drops[x] = (y * fontSize > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+    // Enhanced particle system
+    const particles = [];
+    const particleCount = 60;
+    for(let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 4 + 1,
+            speedX: (Math.random() - 0.5) * 0.8,
+            speedY: (Math.random() - 0.5) * 0.8,
+            opacity: Math.random() * 0.6 + 0.2,
+            color: Math.random() > 0.7 ? '#00ff41' : Math.random() > 0.5 ? '#00ffff' : '#ff0080',
+            pulseSpeed: Math.random() * 0.02 + 0.01,
+            connections: []
         });
     }
 
-    setInterval(drawMatrix, 35);
-}
+    // Matrix rain with enhanced effects
+    const matrix = "CYBERNET_TERMINAL_ACCESS_GRANTED_01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()";
+    const fontSize = 12;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
 
-// -------------------- Listeners --------------------
-window.addEventListener('resize', () => {
-    const canvas = document.querySelector('canvas');
-    if (canvas) {
+    // Grid lines for cyber aesthetic
+    const gridSize = 40;
+    let gridOffset = 0;
+
+    function animate() {
+        // Clear with subtle fade
+        ctx.fillStyle = 'rgba(0,0,0,0.03)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw animated grid
+        ctx.strokeStyle = 'rgba(0,255,65,0.1)';
+        ctx.lineWidth = 0.5;
+        gridOffset += 0.5;
+
+        for(let x = (gridOffset % gridSize) - gridSize; x < canvas.width; x += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.stroke();
+        }
+
+        for(let y = (gridOffset % gridSize) - gridSize; y < canvas.height; y += gridSize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+            ctx.stroke();
+        }
+
+        // Enhanced matrix rain - FIXED VERSION
+                ctx.font = fontSize + 'px "Courier New", monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    // Pick a random character from the matrix string
+                    const text = matrix[Math.floor(Math.random() * matrix.length)];
+
+                    // Calculate position - this makes it flow from top to bottom
+                    const x = i * fontSize;
+                    const y = drops[i] * fontSize;
+
+                    // Calculate alpha based on position (fade out as it goes down) - REDUCED VISIBILITY
+                    const alpha = Math.max(0, 1 - (y / canvas.height));
+
+                    // Main character with reduced opacity (was 0.8, now 0.3)
+                    ctx.fillStyle = `rgba(0,255,65,${alpha * 0.6})`;
+                    ctx.fillText(text, x, y);
+
+                    // Glow effect with reduced opacity (was 0.4, now 0.15)
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#00ff41';
+                    ctx.fillStyle = `rgba(0,255,65,${alpha * 0.2})`;
+                    ctx.fillText(text, x, y);
+                    ctx.shadowBlur = 0;
+
+                    // Move the drop down, reset when it reaches bottom
+                    if (y > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0; // Reset to top
+                    } else {
+                        drops[i]++; // Move down
+                    }
+                }
+
+        // Draw particles with connections
+        particles.forEach((particle, i) => {
+            // Update particle
+            particle.x += particle.speedX;
+            particle.y += particle.speedY;
+
+            // Wrap around edges
+            if (particle.x < 0) particle.x = canvas.width;
+            if (particle.x > canvas.width) particle.x = 0;
+            if (particle.y < 0) particle.y = canvas.height;
+            if (particle.y > canvas.height) particle.y = 0;
+
+            // Pulse effect
+            particle.opacity += Math.sin(Date.now() * particle.pulseSpeed + i) * 0.02;
+            particle.opacity = Math.max(0.1, Math.min(0.8, particle.opacity));
+
+            // Draw connections to nearby particles
+            particles.forEach((other, j) => {
+                if (i !== j) {
+                    const dx = particle.x - other.x;
+                    const dy = particle.y - other.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        const opacity = (1 - distance / 100) * 0.2;
+                        ctx.strokeStyle = `rgba(0,255,65,${opacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particle.x, particle.y);
+                        ctx.lineTo(other.x, other.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            // Draw particle with enhanced glow
+            ctx.save();
+            ctx.globalAlpha = particle.opacity;
+
+            // Outer glow
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = particle.color;
+            ctx.fillStyle = particle.color;
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.size * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Inner core
+            ctx.shadowBlur = 5;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.size * 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Enhanced resize handling
+    const resizeObserver = new ResizeObserver(() => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
+        // Recalculate drops array
+        const newColumns = Math.floor(canvas.width / fontSize);
+        drops.length = newColumns;
+        drops.fill(1);
+
+        // Redistribute particles
+        particles.forEach(particle => {
+            if (particle.x > canvas.width) particle.x = Math.random() * canvas.width;
+            if (particle.y > canvas.height) particle.y = Math.random() * canvas.height;
+        });
+    });
+
+    resizeObserver.observe(document.body);
+}
+
+function initializeUIGlitches() {
+    // Add glitch effects to various UI elements
+    const glitchElements = ['.cyber-button', '.cyber-input', '.status-indicator'];
+
+    setInterval(() => {
+        if (Math.random() < 0.08) {
+            const selector = glitchElements[Math.floor(Math.random() * glitchElements.length)];
+            const elements = document.querySelectorAll(selector);
+
+            if (elements.length > 0) {
+                const randomElement = elements[Math.floor(Math.random() * elements.length)];
+                const originalFilter = randomElement.style.filter;
+
+                randomElement.style.filter = 'hue-rotate(180deg) saturate(2)';
+                randomElement.style.transform = 'scale(1.01)';
+
+                setTimeout(() => {
+                    randomElement.style.filter = originalFilter;
+                    randomElement.style.transform = 'scale(1)';
+                }, 100);
+            }
+        }
+    }, 4000);
+}
+
+// -------------------- Enhanced Listeners --------------------
+document.addEventListener('DOMContentLoaded', init);
+
+// Add performance monitoring
+let lastFrameTime = 0;
+function monitorPerformance() {
+    const now = performance.now();
+    const fps = 1000 / (now - lastFrameTime);
+    lastFrameTime = now;
+
+    // Reduce particle count if performance is poor
+    if (fps < 30) {
+        console.log('Performance optimization: Reducing effects');
+        // Could implement dynamic quality reduction here
+    }
+}
+
+// Clean up on page unload
+window.addEventListener('beforeunload', () => {
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+        canvas.remove();
     }
 });
-
-document.addEventListener('DOMContentLoaded', init);
