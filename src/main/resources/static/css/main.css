@@ -1208,6 +1208,50 @@ body {
     flex-shrink: 0;
 }
 
+.cyber-footer {
+    text-align: center;
+    padding: 10px 0;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #00ff41;
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid #00ff41;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    box-shadow: 0 0 8px #00ff41;
+}
+
+.cyber-footer a {
+    color: #00ff41;
+    text-decoration: none;
+    margin: 0 6px;
+    transition: color 0.3s ease;
+}
+
+.cyber-footer a:hover,
+.cyber-footer a:focus {
+    text-decoration: underline;
+    color: #66ff99;
+    outline: none;
+}
+
+@media screen and (max-width: 480px) {
+    .cyber-footer p {
+        padding: 0 10px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .cyber-footer a {
+        display: inline-block;
+        margin: 4px 4px;
+    }
+}
+
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .chat-container {
