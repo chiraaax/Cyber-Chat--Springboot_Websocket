@@ -71,7 +71,7 @@ CyberNet Terminal is a secure and reactive chat system with:
 
 1. **Clone the Repo**
 
-git clone https://github.com/chiraaax/CyberNet-Terminal.git
+git clone https://github.com/chiraaax/CyberNet-Terminal--Springboot_Websocket.git <br>
 cd CyberNet-Terminal
 
 
@@ -124,15 +124,14 @@ CyberNet-Terminal/
 
 ## 👨‍🎓 Author
 
-> Created with passion by
-> **Chiranjeewa Peellawatta**
-> 🧑‍💻 Software Engineering Undergraduate @ SLIIT
-> 🌍 Rajagiriya, Sri Lanka
-> 🔗 [GitHub – @chiraaax](https://github.com/chiraaax)
+Created with passion by **Chiranjeewa Peellawatta** <br>
+> 🧑‍💻 Information Technology Undergraduate @ SLIIT <br>
+> 🌍 Rajagiriya, Sri Lanka <br>
+> 🔗 [GitHub – @chiraaax](https://github.com/chiraaax) <br>
 
-📫 **Reach Me**
-📧 `chiranjeewapeellawatta@gmail.com`
-🔗 [LinkedIn](#) *(optional)*
+📫 **Reach Me** <br>
+> 📧 `chiranjeewapeellawatta@gmail.com` <br>
+> 🔗 [LinkedIn](www.linkedin.com/in/chiranjeewa-peellawatta)
 
 ---
 
@@ -140,10 +139,10 @@ CyberNet-Terminal/
 
 If you like this project:
 
-⭐ Star the repo
-🍴 Fork and customize
-🧠 Share with cyberpunk fans
-🛠️ Contribute enhancements
+⭐Star the repo <br>
+🍴 Fork and customize <br>
+🧠 Share with cyberpunk fans <br>
+🛠️ Contribute enhancements <br>
 
 ---
 
