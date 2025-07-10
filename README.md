@@ -3,6 +3,7 @@
   <img src="https://img.shields.io/badge/Built%20With-Spring%20Boot%20%26%20WebSocket-green?style=flat-square"/>
   <img src="https://img.shields.io/badge/Live-Real--Time%20Chat-blue?style=flat-square"/>
   <img src="https://img.shields.io/badge/UI-Cyberpunk%20Glitch%20Style-purple?style=flat-square"/>
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"/>
 </p>
 
 <p align="center">
