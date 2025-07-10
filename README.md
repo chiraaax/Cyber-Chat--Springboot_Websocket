@@ -57,12 +57,10 @@ CyberNet Terminal is a secure and reactive chat system with:
 ## 🌈 UI Preview
 
 <p align="center">
-  <img src="screenshots/terminal-ui.png" width="700" alt="CyberNet Terminal UI"/>
+  <img src="https://github.com/chiraaax/CyberNet-Terminal--Springboot_Websocket/blob/main/GIF.gif" alt="CyberNet Terminal UI"/>
 </p>
 
-<p align="center">
-  <img src="screenshots/chat-demo.gif" width="500" alt="Chat in Action"/>
-</p>
+
 
 > 👾 *Terminal-inspired chat interface with scanlines, flickers, and glowing vibes.*
 
